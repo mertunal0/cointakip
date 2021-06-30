@@ -163,7 +163,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int i) {
 
-                      double coin_deger = Globals.en_iyi_coinler[i]['quote']['USD']['price'];
+                      double coin_deger = Globals.en_iyi_coinler[i]['quotes']['USD']['price'];
                       int coin_deger_tmp = coin_deger.toInt();
                       int virgulden_sonraki_bas_sayisi = 7;
                       int coin_deger_basamak = 0;
@@ -178,7 +178,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
 
                       String coin_deger_str = coin_deger.toStringAsFixed(virgulden_sonraki_bas_sayisi);
 
-                      bool deger_son_saatte_artmis_mi = Globals.en_iyi_coinler[i]['quote']['USD']['percent_change_1h'] >= 0;
+                      bool deger_son_saatte_artmis_mi = Globals.en_iyi_coinler[i]['quotes']['USD']['percent_change_1h'] >= 0;
 
                       String fiyat_oku_sonucu = "down_arrow.png";
                       if(deger_son_saatte_artmis_mi)
@@ -238,7 +238,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                                       margin: EdgeInsets.fromLTRB(0, 0, 2, 1),
                                       shadowColor: Colors.transparent,
                                     ),
-                                    Text(Globals.en_iyi_coinler[i]['quote']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
+                                    Text(Globals.en_iyi_coinler[i]['quotes']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
                                       style: TextStyle(fontSize: 10,
 
                                           color: deger_son_saatte_artmis_mi ? Colors.green : Colors.red,
@@ -277,7 +277,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int i) {
 
-                      double coin_deger = Globals.max_artan_azalan_coinler[i]['quote']['USD']['price'];
+                      double coin_deger = Globals.max_artan_azalan_coinler[i]['quotes']['USD']['price'];
                       int coin_deger_tmp = coin_deger.toInt();
                       int virgulden_sonraki_bas_sayisi = 7;
                       int coin_deger_basamak = 0;
@@ -292,7 +292,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
 
                       String coin_deger_str = coin_deger.toStringAsFixed(virgulden_sonraki_bas_sayisi);
 
-                      bool deger_son_saatte_artmis_mi = Globals.max_artan_azalan_coinler[i]['quote']['USD']['percent_change_1h'] >= 0;
+                      bool deger_son_saatte_artmis_mi = Globals.max_artan_azalan_coinler[i]['quotes']['USD']['percent_change_1h'] >= 0;
 
                       String fiyat_oku_sonucu = "down_arrow.png";
                       if(deger_son_saatte_artmis_mi)
@@ -352,7 +352,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                                       margin: EdgeInsets.fromLTRB(0, 0, 2, 1),
                                       shadowColor: Colors.transparent,
                                     ),
-                                    Text(Globals.max_artan_azalan_coinler[i]['quote']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
+                                    Text(Globals.max_artan_azalan_coinler[i]['quotes']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
                                       style: TextStyle(fontSize: 10,
                                           color: deger_son_saatte_artmis_mi ? Colors.green : Colors.red,
                                           fontWeight: FontWeight.bold),)

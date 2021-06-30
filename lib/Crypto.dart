@@ -19,15 +19,15 @@ class _CryptoState extends State<Crypto> {
 
   String secili_siralama_dropdown_item = "Piyasa Değeri (Azalan)";
   
+  String on_bes_dakika    = '15 dakika';
   String bir_saat         = '1 saat';
   String yirmi_dort_saat  = '24 saat';
   String bir_hafta        = '1 hafta';
   String bir_ay           = '1 ay';
-  String uc_ay            = '3 ay';
   
-  String secili_degisim_kriteri_dropdown_item = '1 saat';
+  String secili_degisim_kriteri_dropdown_item = '15 dakika';
 
-  String secili_degisim_kriteri_data_ref = 'percent_change_1h';
+  String secili_degisim_kriteri_data_ref = 'percent_change_15m';
 
   void initState()
   {
@@ -43,6 +43,13 @@ class _CryptoState extends State<Crypto> {
     void Kripto_Listesini_Sirala()
     {
       //!< Degisim kriterini guncelleyelim
+
+      if(secili_degisim_kriteri_dropdown_item == on_bes_dakika)
+      {
+      setState(() {
+      secili_degisim_kriteri_data_ref = 'percent_change_15m';
+      });
+      }
       if(secili_degisim_kriteri_dropdown_item == bir_saat)
       {
         setState(() {
@@ -67,49 +74,43 @@ class _CryptoState extends State<Crypto> {
           secili_degisim_kriteri_data_ref = 'percent_change_30d';
         });
       }
-      else if(secili_degisim_kriteri_dropdown_item == uc_ay)
-      {
-        setState(() {
-          secili_degisim_kriteri_data_ref = 'percent_change_90d';
-        });
-      }
 
 
       //!< Coinleri siralayalim
       if(secili_siralama_dropdown_item == fiyat_artan)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD']['price'] >= b['quote']['USD']['price'] ? 1:0 ) - (b['quote']['USD']['price'] >= a['quote']['USD']['price'] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD']['price'] >= b['quotes']['USD']['price'] ? 1:0 ) - (b['quotes']['USD']['price'] >= a['quotes']['USD']['price'] ? 1:0 ));
         });
       }
       else if(secili_siralama_dropdown_item == fiyat_azalan)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD']['price'] < b['quote']['USD']['price'] ? 1:0 ) - (b['quote']['USD']['price'] < a['quote']['USD']['price'] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD']['price'] < b['quotes']['USD']['price'] ? 1:0 ) - (b['quotes']['USD']['price'] < a['quotes']['USD']['price'] ? 1:0 ));
         });
       }
       else if(secili_siralama_dropdown_item == piyasa_degeri_artan)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD']['market_cap'] >= b['quote']['USD']['market_cap'] ? 1:0 ) - (b['quote']['USD']['market_cap'] >= a['quote']['USD']['market_cap'] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD']['market_cap'] >= b['quotes']['USD']['market_cap'] ? 1:0 ) - (b['quotes']['USD']['market_cap'] >= a['quotes']['USD']['market_cap'] ? 1:0 ));
         });
       }
       else if(secili_siralama_dropdown_item == piyasa_degeri_azalan)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD']['market_cap'] < b['quote']['USD']['market_cap'] ? 1:0 ) - (b['quote']['USD']['market_cap'] < a['quote']['USD']['market_cap'] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD']['market_cap'] < b['quotes']['USD']['market_cap'] ? 1:0 ) - (b['quotes']['USD']['market_cap'] < a['quotes']['USD']['market_cap'] ? 1:0 ));
         });
       }
       else if(secili_siralama_dropdown_item == en_cok_yukselenler)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD'][secili_degisim_kriteri_data_ref] < b['quote']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ) - (b['quote']['USD'][secili_degisim_kriteri_data_ref] < a['quote']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD'][secili_degisim_kriteri_data_ref] < b['quotes']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ) - (b['quotes']['USD'][secili_degisim_kriteri_data_ref] < a['quotes']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ));
         });
       }
       else if(secili_siralama_dropdown_item == en_cok_dusenler)
       {
         setState(() {
-          crypto_list.sort( (a, b) => (a['quote']['USD'][secili_degisim_kriteri_data_ref] >= b['quote']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ) - (b['quote']['USD'][secili_degisim_kriteri_data_ref] >= a['quote']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ));
+          crypto_list.sort( (a, b) => (a['quotes']['USD'][secili_degisim_kriteri_data_ref] >= b['quotes']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ) - (b['quotes']['USD'][secili_degisim_kriteri_data_ref] >= a['quotes']['USD'][secili_degisim_kriteri_data_ref] ? 1:0 ));
         });
       }
     }
@@ -169,11 +170,11 @@ class _CryptoState extends State<Crypto> {
                         Kripto_Listesini_Sirala();
                       },
                       items: <String>[
+                        on_bes_dakika,
                         bir_saat,
                         yirmi_dort_saat,
                         bir_hafta,
                         bir_ay,
-                        uc_ay
                       ]
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
@@ -199,7 +200,7 @@ class _CryptoState extends State<Crypto> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int i) {
 
-                    double coin_deger = crypto_list[i]['quote']['USD']['price'];
+                    double coin_deger = crypto_list[i]['quotes']['USD']['price'];
                     int coin_deger_tmp = coin_deger.toInt();
                     int virgulden_sonraki_bas_sayisi = 7;
                     int coin_deger_basamak = 0;
@@ -214,7 +215,7 @@ class _CryptoState extends State<Crypto> {
 
                     String coin_deger_str = coin_deger.toStringAsFixed(virgulden_sonraki_bas_sayisi);
 
-                    bool deger_son_saatte_artmis_mi = crypto_list[i]['quote']['USD']['percent_change_1h'] >= 0;
+                    bool deger_son_saatte_artmis_mi = crypto_list[i]['quotes']['USD'][secili_degisim_kriteri_data_ref] >= 0;
 
                     String fiyat_oku_sonucu = "down_arrow.png";
                     if(deger_son_saatte_artmis_mi)
@@ -222,7 +223,7 @@ class _CryptoState extends State<Crypto> {
                       fiyat_oku_sonucu = "up_arrow.png";
                     }
 
-                    double coin_piyasa_degeri = crypto_list[i]['quote']['USD']['market_cap'];
+                    int    coin_piyasa_degeri = crypto_list[i]['quotes']['USD']['market_cap'];
                     int    coin_piyasa_degeri_int = coin_piyasa_degeri.toInt();
                     int    coin_piyasa_deger_basamak = 0;
                     double coin_piyasa_degeri_tmp = 0;
@@ -319,7 +320,7 @@ class _CryptoState extends State<Crypto> {
                                                     margin: EdgeInsets.fromLTRB(4, 0, 2, 1),
                                                     shadowColor: Colors.transparent,
                                                   ),
-                                                  Text(crypto_list[i]['quote']['USD'][secili_degisim_kriteri_data_ref].toStringAsFixed(2)+'%',
+                                                  Text(crypto_list[i]['quotes']['USD'][secili_degisim_kriteri_data_ref].toStringAsFixed(2)+'%',
                                                     style: TextStyle(fontSize: 9,
                                                         color: deger_son_saatte_artmis_mi ? Colors.green : Colors.red,
                                                         fontWeight: FontWeight.bold),)
