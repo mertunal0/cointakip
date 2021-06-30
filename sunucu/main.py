@@ -22,37 +22,15 @@ firebase_admin.initialize_app(cred, {
 })
 db_en_buyukler_ref      = db.reference('/cmcap_en_buyuk_market_cap')
 db_max_artan_azalan_ref = db.reference('/cmcap_max_artan_azalan')
+db_global_ref           = db.reference('/cmcap_global_olcumler')
 
-local_coinmarketcap_data = [
-        # {
-        #    'id': '',
-        #    'name': '',
-        #    'symbol': '',
-        #    'slug': '',
-        #    'max_supply': 0,
-        #    'circulating_supply': 0,
-        #    'total_supply': 0,
-        #    'cmc_rank': 0,
-        #    'last_updated': '',
-        #    'quote': {
-        #        'USD': {
-        #            'price': 0,
-        #            'volume_24h': 0,
-        #            'percent_change_1h': 0,
-        #            'percent_change_24h': 0,
-        #            'percent_change_7d': 0,
-        #            'percent_change_30d': 0,
-        #            'percent_change_90d': 0,
-        #            'market_cap': 0,
-        #        }
-        #    },
-        # },
-
-    ]
+local_coinmarketcap_data = []
+local_coinmarketcap_global_data = {}
 
 
 # Coinmarketcap url
-cmcap_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+cmcap_en_buyukler_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+cmcap_global_metr_url = 'https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest'
 
 cmcap_parameters = {
   'start': '1',
@@ -74,7 +52,7 @@ class CoinMarketCap_Verisi:
 
     def coinmarketcap_verisi_cek(self):
         try:
-            cmcap_response = cmcap_session.get(cmcap_url, params=cmcap_parameters)
+            cmcap_response = cmcap_session.get(cmcap_en_buyukler_url, params=cmcap_parameters)
             cmcap_donut = json.loads(cmcap_response.text)
             for i in range(ANLIK_CEKILECEK_COIN_SAYISI):
                 local_coinmarketcap_data.append(cmcap_donut['data'][i])
@@ -84,6 +62,17 @@ class CoinMarketCap_Verisi:
 
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e)
+
+    def coinmarketcap_global_metrics_cek_ve_firebase_pushla(self):
+        try:
+            cmcap_response = cmcap_session.get(cmcap_global_metr_url)
+            cmcap_donut = json.loads(cmcap_response.text)
+
+            db_global_ref.set(cmcap_donut['data'])
+
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e)
+
 
     def market_cap_buyuklugune_gore_sirala(self):
         self.en_buyuk_market_cap_verisi = sorted(local_coinmarketcap_data, key=lambda k: k['quote']['USD']['market_cap'], reverse=True)
@@ -110,6 +99,7 @@ cmcap_veri = CoinMarketCap_Verisi()
 while(True):
     # Coin Market Cap'den anlik veriyi cekelim
     cmcap_veri.coinmarketcap_verisi_cek()
+    cmcap_veri.coinmarketcap_global_metrics_cek_ve_firebase_pushla()
 
     # Firebase'e anlik coin verisini pushlayalim
     cmcap_veri.en_buyuk_market_cap_verisini_firebase_pushla()

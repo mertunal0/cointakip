@@ -4,21 +4,146 @@ import 'package:flutter/material.dart';
 import 'package:myapp/CmcapVeriler.dart';
 import 'package:myapp/Globals.dart' as Globals;
 import 'package:myapp/firebase_sdk.dart';
+import 'ScrollingText.dart';
+import 'Global.dart';
 
 class Ana_Sayfa extends StatefulWidget {
+  //late final ValueChanged<int> update_nav_id;
+  //Ana_Sayfa({required this.update_nav_id});
+
   @override
   _Ana_SayfaState createState() => _Ana_SayfaState();
 }
 
 class _Ana_SayfaState extends State<Ana_Sayfa> {
+
+  String kayan_text_str = '';
+
   @override
   Widget build(BuildContext context) {
+
+    if(false == Globals.global_olcumler.isEmpty)
+    {
+      String aktif_coin_sayisi_str = Globals.global_olcumler[0]['active_cryptocurrencies'].toString();
+
+      double btc_dominance = Globals.global_olcumler[0]['btc_dominance'];
+      String btc_dominance_str = btc_dominance.toStringAsFixed(3);
+
+
+      //!< Total market cap
+      double toplam_coin_piyasa_degeri = Globals.global_olcumler[0]['quote']['USD']['total_market_cap'];
+      int    toplam_coin_piyasa_degeri_tmp = toplam_coin_piyasa_degeri.toInt();
+      String toplam_coin_piyasa_degeri_str = '';
+      String total_market_cap_sonuna_gelecek = '';
+      int    total_market_cap_basamak_sayisi = 0;
+
+      while(toplam_coin_piyasa_degeri_tmp != 0)
+      {
+        total_market_cap_basamak_sayisi++;
+
+        toplam_coin_piyasa_degeri_tmp = toplam_coin_piyasa_degeri_tmp ~/ 10;
+      }
+
+      if(total_market_cap_basamak_sayisi > 12)
+      {
+        total_market_cap_sonuna_gelecek = 'Tr';
+        toplam_coin_piyasa_degeri /= 1000000000000;
+      }
+      else if(total_market_cap_basamak_sayisi > 9)
+      {
+        total_market_cap_sonuna_gelecek = 'Bn';
+        toplam_coin_piyasa_degeri /= 1000000000;
+      }
+      else if(total_market_cap_basamak_sayisi > 6)
+      {
+        total_market_cap_sonuna_gelecek = 'Mn';
+        toplam_coin_piyasa_degeri /= 1000000;
+      }
+      toplam_coin_piyasa_degeri_str = toplam_coin_piyasa_degeri.toStringAsFixed(5);
+
+
+      //!< 24h Total Volume
+      double toplam_hacim_degeri = Globals.global_olcumler[0]['quote']['USD']['total_volume_24h'];
+      int    toplam_hacim_degeri_tmp = toplam_hacim_degeri.toInt();
+      String toplam_hacim_degeri_str = '';
+      String total_volume_sonuna_gelecek = '';
+      int    total_volume_basamak_sayisi = 0;
+
+      while(toplam_hacim_degeri_tmp != 0)
+      {
+        total_volume_basamak_sayisi++;
+
+        toplam_hacim_degeri_tmp = toplam_hacim_degeri_tmp ~/ 10;
+      }
+
+      if(total_volume_basamak_sayisi > 12)
+      {
+        total_volume_sonuna_gelecek = 'Tr';
+        toplam_hacim_degeri /= 1000000000000;
+      }
+      else if(total_volume_basamak_sayisi > 9)
+      {
+        total_volume_sonuna_gelecek = 'Bn';
+        toplam_hacim_degeri /= 1000000000;
+      }
+      else if(total_volume_basamak_sayisi > 6)
+      {
+        total_volume_sonuna_gelecek = 'Mn';
+        toplam_hacim_degeri /= 1000000;
+      }
+      toplam_hacim_degeri_str = toplam_hacim_degeri.toStringAsFixed(5);
+
+
+      kayan_text_str += "Dünyadaki Aktif Coin Sayısı: " + aktif_coin_sayisi_str + "   •   ";
+      kayan_text_str += "Bitcoin Dominansı: " + btc_dominance_str +"%" + "   •   ";
+      kayan_text_str += "Toplam Coin Piyasası Değeri: \$" + toplam_coin_piyasa_degeri_str + " " + total_market_cap_sonuna_gelecek + "   •   ";
+      kayan_text_str += "Son 24 Saatteki Hacim :\$" + toplam_hacim_degeri_str + " " + total_volume_sonuna_gelecek + "   •   ";
+
+    }
+
     return Container(
-      height: 100 * 2,
+      height: 100 * 2 + 36,
       margin: EdgeInsets.all(8),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //!< Genel olcumler
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+              height: 28,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Color.fromRGBO(77, 77, 77, 1)),
+                  color: Color.fromRGBO(77, 77, 77, 1),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Global()),
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(child:
+                    ScrollingText(
+                      text: kayan_text_str,
+                      textStyle: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    )
+                    )
+                  ],
+                ),
+              )
+            ),
+
+            //!< En buyukler
             Card(
               child: Text(
                 'En Büyükler',
@@ -187,7 +312,7 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                               Row(
                                 //!< Kart icindeki 1. kolon
                                 children: [
-                                  Image.asset( 'assets/crypto_icons/'+Globals.max_artan_azalan_coinler[i]['symbol'].toString().toLowerCase()+'.png',
+                                  Image.asset( 'assets/crypto_icons/'+ Globals.max_artan_azalan_coinler[i]['symbol'].toString().toLowerCase()+'.png',
                                     height: 24,
                                     width: 24,
                                     errorBuilder: (context, error, stackTrace) =>
@@ -229,7 +354,6 @@ class _Ana_SayfaState extends State<Ana_Sayfa> {
                                     ),
                                     Text(Globals.max_artan_azalan_coinler[i]['quote']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
                                       style: TextStyle(fontSize: 10,
-
                                           color: deger_son_saatte_artmis_mi ? Colors.green : Colors.red,
                                           fontWeight: FontWeight.bold),)
                                   ],

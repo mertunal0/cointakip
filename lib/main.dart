@@ -7,6 +7,7 @@ import 'package:myapp/firebase_sdk.dart';
 import 'Ana_Sayfa.dart';
 import 'Crypto.dart';
 import 'Portfolio.dart';
+import 'Global.dart';
 
 
 void main() =>
@@ -28,6 +29,7 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
 
     Firebase_En_Buyuk_Market_Cap_Veriyi_Cek(fb_app);
     Firebase_En_Cok_Kazanan_Kaybedenleri_Cek(fb_app);
+    Firebase_Global_Veriyi_Cek(fb_app);
   }
 
   void Firebase_En_Buyuk_Market_Cap_Veriyi_Cek(FirebaseApp app)
@@ -58,11 +60,31 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
     });
   }
 
+  void Firebase_Global_Veriyi_Cek(FirebaseApp app)
+  {
+    final DatabaseReference db = FirebaseDatabase(app: app).reference();
+    db.child('cmcap_global_olcumler').once().
+    then((result) =>
+    {
+      this.setState(() {
+        Globals.global_olcumler.add(result.value);
+        (context as Element).reassemble();
+      })
+    });
+  }
+
   @override
   void initState()
   {
     Firebase_Baslat();
     super.initState();
+  }
+
+  void Widgettan_Secili_Nav_Bar_idx_Degistir(int index)
+  {
+    setState(() {
+      secili_bottom_nav_bar_index = index;
+    });
   }
 
   void Secili_Nav_Bar_idx_Degistir(int index)
@@ -74,6 +96,7 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
 
   //!< State
   int secili_bottom_nav_bar_index = 0;
+  String baslik_metin = '';
 
   final Bottom_Tablar = [
     //!< Anasayfa tabi
@@ -86,35 +109,66 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
 
   @override
   Widget build(BuildContext context) {
+
+    this.setState(() {
+      switch(secili_bottom_nav_bar_index)
+      {
+        case 0:
+        {
+          setState(() {baslik_metin = "Ana Sayfa";});
+          break;
+        }case 1:
+        {
+          setState(() {baslik_metin = "Kripto";});
+          break;
+        }
+        case 2:
+        {
+          setState(() {baslik_metin = "Portföy";});
+          break;
+        }
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ana Sayfa'),
+        title: Text(baslik_metin,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800
+                    ),),
         backgroundColor: Color.fromRGBO(247, 147, 26, 1),
+        toolbarHeight: 40,
       ),
 
       body: Bottom_Tablar[secili_bottom_nav_bar_index],
 
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Color.fromRGBO(77, 77, 77, 1),),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.insert_chart, color: Color.fromRGBO(77, 77, 77, 1),),
-              label: 'Crypto'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet, color: Color.fromRGBO(77, 77, 77, 1),),
-              label: 'Portfolio'
-          ),
-        ],
-        elevation: 12,
-        selectedItemColor: Color.fromRGBO(13, 87, 155, 1),
-        backgroundColor: Color.fromRGBO(247, 147, 26, 1),
-        currentIndex: secili_bottom_nav_bar_index,
-        onTap: Secili_Nav_Bar_idx_Degistir,
-      ),
+      bottomNavigationBar: SizedBox(
+        height: 54,
+        child: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Color.fromRGBO(77, 77, 77, 1),),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.insert_chart, color: Color.fromRGBO(77, 77, 77, 1),),
+                label: ''
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet, color: Color.fromRGBO(77, 77, 77, 1),),
+                label: ''
+            ),
+
+          ],
+          elevation: 4,
+          selectedItemColor: Color.fromRGBO(13, 87, 155, 1),
+          backgroundColor: Color.fromRGBO(247, 147, 26, 1),
+          currentIndex: secili_bottom_nav_bar_index,
+          onTap: Secili_Nav_Bar_idx_Degistir,
+          type: BottomNavigationBarType.fixed,
+        ),
+      )
     );
   }
 }
