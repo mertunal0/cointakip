@@ -1,3 +1,5 @@
+from builtins import print
+
 from firebase import firebase
 import firebase_admin
 from firebase_admin import credentials
@@ -127,7 +129,7 @@ while(True):
     if(sunucu_calisma_sayac >= (GLOBAL_DATA_CALISMA_FREKANSI_DK * DK_2_SN) / SUNUCU_CALISMA_FREKANSI_SN ):
         cmcap_veri.coinmarketcap_global_metrics_cek_ve_firebase_pushla()
 
-
+    print(local_coinmarketcap_data[0]['quotes']['USD']['percent_change_1h'])
     # Belirlenen sure boyunca prosesi uyutalim
     time.sleep(SUNUCU_CALISMA_FREKANSI_SN)
 

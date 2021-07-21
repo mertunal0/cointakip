@@ -11,3 +11,6 @@ FirebaseOptions api_cred = new FirebaseOptions( apiKey: api_key,
 List en_iyi_coinler = [];
 List max_artan_azalan_coinler = [];
 List global_olcumler = [];
+
+String GL_secili_degisim_kriteri_dropdown_item = '15 dakika';
+String GL_secili_degisim_kriteri_data_ref = 'percent_change_15m';

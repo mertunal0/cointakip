@@ -12,6 +12,7 @@ import 'Global.dart';
 
 void main() =>
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: Alt_Nav_Bar(),
   ));
 
@@ -22,19 +23,30 @@ class Alt_Nav_Bar extends StatefulWidget {
 
 class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
 
+  late final FirebaseApp fb_app;
+
   Future<void> Firebase_Baslat()
-  async {
-    final FirebaseApp fb_app = await Firebase.
+  async
+  {
+    this.fb_app = await Firebase.
     initializeApp(options: Globals.api_cred);
 
-    Firebase_En_Buyuk_Market_Cap_Veriyi_Cek(fb_app);
-    Firebase_En_Cok_Kazanan_Kaybedenleri_Cek(fb_app);
-    Firebase_Global_Veriyi_Cek(fb_app);
+    Firebase_En_Buyuk_Market_Cap_Veriyi_Cek();
+    Firebase_En_Cok_Kazanan_Kaybedenleri_Cek();
+    Firebase_Global_Veriyi_Cek();
   }
 
-  void Firebase_En_Buyuk_Market_Cap_Veriyi_Cek(FirebaseApp app)
+  Future<void> Tum_Firebase_Datasini_Guncelle()
+  async
   {
-    final DatabaseReference db = FirebaseDatabase(app: app).reference();
+    Firebase_En_Buyuk_Market_Cap_Veriyi_Cek();
+    Firebase_En_Cok_Kazanan_Kaybedenleri_Cek();
+    Firebase_Global_Veriyi_Cek();
+  }
+
+  void Firebase_En_Buyuk_Market_Cap_Veriyi_Cek()
+  {
+    final DatabaseReference db = FirebaseDatabase(app: this.fb_app).reference();
     db.child('cmcap_en_buyuk_market_cap').once().
     then((result) =>
     {
@@ -43,12 +55,15 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
         Globals.en_iyi_coinler = result.value;
         (context as Element).reassemble();
       })
-    } );
+    } ).
+    catchError((e) =>
+    {
+    });
   }
-  
-  void Firebase_En_Cok_Kazanan_Kaybedenleri_Cek(FirebaseApp app)
+
+  void Firebase_En_Cok_Kazanan_Kaybedenleri_Cek()
   {
-    final DatabaseReference db = FirebaseDatabase(app: app).reference();
+    final DatabaseReference db = FirebaseDatabase(app: this.fb_app).reference();
     db.child('cmcap_max_artan_azalan').once().
     then((result) =>
     {
@@ -60,9 +75,9 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
     });
   }
 
-  void Firebase_Global_Veriyi_Cek(FirebaseApp app)
+  void Firebase_Global_Veriyi_Cek()
   {
-    final DatabaseReference db = FirebaseDatabase(app: app).reference();
+    final DatabaseReference db = FirebaseDatabase(app: this.fb_app).reference();
     db.child('cmcap_global_olcumler').once().
     then((result) =>
     {
@@ -124,7 +139,7 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
         }
         case 2:
         {
-          setState(() {baslik_metin = "Portföy";});
+          setState(() {baslik_metin = "Alarm Kur";});
           break;
         }
       }
@@ -136,12 +151,21 @@ class _Alt_Nav_Bar_State extends State<Alt_Nav_Bar> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800
-                    ),),
+                    ),
+                ),
         backgroundColor: Color.fromRGBO(247, 147, 26, 1),
         toolbarHeight: 40,
       ),
 
-      body: Bottom_Tablar[secili_bottom_nav_bar_index],
+      body:
+      RefreshIndicator(
+          child:
+          Stack(
+            key: UniqueKey(),
+            children: <Widget>[ListView(), Bottom_Tablar[secili_bottom_nav_bar_index]],
+          ),
+          onRefresh: Tum_Firebase_Datasini_Guncelle
+      ),
 
       bottomNavigationBar: SizedBox(
         height: 54,

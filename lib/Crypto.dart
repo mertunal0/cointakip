@@ -25,9 +25,9 @@ class _CryptoState extends State<Crypto> {
   String bir_hafta        = '1 hafta';
   String bir_ay           = '1 ay';
   
-  String secili_degisim_kriteri_dropdown_item = '15 dakika';
+  String secili_degisim_kriteri_dropdown_item = Globals.GL_secili_degisim_kriteri_dropdown_item;
 
-  String secili_degisim_kriteri_data_ref = 'percent_change_15m';
+  String secili_degisim_kriteri_data_ref = Globals.GL_secili_degisim_kriteri_data_ref;
 
   void initState()
   {
@@ -47,31 +47,36 @@ class _CryptoState extends State<Crypto> {
       if(secili_degisim_kriteri_dropdown_item == on_bes_dakika)
       {
       setState(() {
-      secili_degisim_kriteri_data_ref = 'percent_change_15m';
+        secili_degisim_kriteri_data_ref = 'percent_change_15m';
+        Globals.GL_secili_degisim_kriteri_data_ref = 'percent_change_15m';
       });
       }
       if(secili_degisim_kriteri_dropdown_item == bir_saat)
       {
         setState(() {
           secili_degisim_kriteri_data_ref = 'percent_change_1h';
+          Globals.GL_secili_degisim_kriteri_data_ref = 'percent_change_1h';
         });
       }
       else if(secili_degisim_kriteri_dropdown_item == yirmi_dort_saat)
       {
         setState(() {
           secili_degisim_kriteri_data_ref = 'percent_change_24h';
+          Globals.GL_secili_degisim_kriteri_data_ref = 'percent_change_24h';
         });
       }
       else if(secili_degisim_kriteri_dropdown_item == bir_hafta)
       {
         setState(() {
           secili_degisim_kriteri_data_ref = 'percent_change_7d';
+          Globals.GL_secili_degisim_kriteri_data_ref = 'percent_change_7d';
         });
       }
       else if(secili_degisim_kriteri_dropdown_item == bir_ay)
       {
         setState(() {
           secili_degisim_kriteri_data_ref = 'percent_change_30d';
+          Globals.GL_secili_degisim_kriteri_data_ref = 'percent_change_30d';
         });
       }
 
@@ -165,7 +170,8 @@ class _CryptoState extends State<Crypto> {
                       elevation: 0,
                       onChanged: (String? yeni_secili_item) {
                         setState(() {
-                          secili_degisim_kriteri_dropdown_item = yeni_secili_item!;
+                          Globals.GL_secili_degisim_kriteri_dropdown_item = yeni_secili_item!;
+                          secili_degisim_kriteri_dropdown_item = yeni_secili_item;
                         });
                         Kripto_Listesini_Sirala();
                       },

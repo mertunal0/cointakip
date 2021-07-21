@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/Globals.dart' as Globals;
+import 'package:flutter_native_admob/flutter_native_admob.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 
 class Global extends StatefulWidget {
   @override
@@ -341,6 +343,11 @@ class _GlobalState extends State<Global> {
                                   fontSize : 11,
                                   color: Color.fromRGBO(247, 147, 26, 1),
                               ),
+                            ),
+                            NativeAdmob(
+                              adUnitID: Theme.of(context).platform == TargetPlatform.iOS ? "ca-app-pub-7764130368146320/7819956444": "ca-app-pub-7764130368146320/8720499794",
+                              //loading: Center(child: CircularProgressIndicator()),
+
                             )
                           ]),
                         ],
@@ -354,7 +361,13 @@ class _GlobalState extends State<Global> {
                               TextStyle(
                                   fontSize : 11,
                                   color: Color.fromRGBO(247, 147, 26, 1),
-                              ),)
+                              ),
+                            ),
+                            NativeAdmob(
+                              adUnitID: Theme.of(context).platform == TargetPlatform.iOS ? "ca-app-pub-7764130368146320/7819956444": "ca-app-pub-7764130368146320/8720499794",
+                              //loading: Center(child: CircularProgressIndicator()),
+
+                            )
                           ]),
                         ],
                       ),
