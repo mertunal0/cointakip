@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/Globals.dart' as Globals;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:workmanager/workmanager.dart';
+
 class Portfolio extends StatefulWidget {
   @override
   _PortfolioState createState() => _PortfolioState();
@@ -26,7 +28,18 @@ class _PortfolioState extends State<Portfolio> {
 
   void Secili_Coin_Icin_Fiyat_Alarmi_Kur()
   {
-
+    if(this.alarm_edit_text_deger == "")
+    {
+      //!< Deger bos hatasi
+      Globals.alarm_kurulu_mu = false;
+    }
+    else
+    {
+      Globals.alarm_kurulu_mu = true;
+      Globals.alarm_fiyat_bilgisi = double.parse(this.alarm_edit_text_deger);
+      Globals.alarm_kurulan_coin_symbol = crypto_list[carousel_secili_idx]['symbol'];
+      Globals.alarm_kuruldugundaki_fiyat_bilgisi = crypto_list[carousel_secili_idx]['quotes']['USD']['price'];
+    }
   }
 
   void Arama_Bari_Texti_ve_Listeyi_Degistir(String deger_str)
@@ -176,6 +189,9 @@ class _PortfolioState extends State<Portfolio> {
                       children: [
                         Text(crypto_list[i]['symbol'],
                             style: TextStyle( fontSize: 22, fontWeight: FontWeight.w900, color: Color.fromRGBO(77, 77, 77, 1))
+                        ),
+                        Text(crypto_list[i]['name'],
+                            style: TextStyle( fontSize: 16, fontWeight: FontWeight.w800, color: Color.fromRGBO(77, 77, 77, 0.8))
                         ),
                         Text(crypto_list[i]['quotes']['USD']['percent_change_1h'].toStringAsFixed(2)+'%',
                           style:
